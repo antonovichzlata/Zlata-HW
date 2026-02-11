@@ -54,3 +54,20 @@ const gameController = {
             `)
     }
 }
+
+
+let zero = 0;
+let one = 0;
+
+for (let i = 0; i < 1000; i++) {
+    let turn = Math.round(Math.random());
+
+    if (turn === 0) {
+        zero++;
+    } else {
+        one++;
+    }
+}
+
+console.log('0 випало:', zero);
+console.log('1 випало:', one);
