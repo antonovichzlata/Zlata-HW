@@ -10,11 +10,26 @@ const mainDOM = document.querySelector('.main');
 const movieDetailsPageDOM = document.querySelector('.movie-details-page');
 const movieDetailsDOM = document.querySelector('.movie-details');
 const backButtonDOM = document.querySelector('.back-button');
+const prevPageBtnDOM = document.querySelector('.prev-page');
+const currPageDOM = document.querySelector('.curr-page');
+const nextPageBtnDOM = document.querySelector('.next-page');
+const categoryButtonsDOM = document.querySelectorAll('.movie-filters button');
 
 const imagePrefix = 'https://image.tmdb.org/t/p/w500/'
 const backdropPrefix = 'https://image.tmdb.org/t/p/w1280/';
 
 let genres = [];
+let currentPage = 1;
+let totalPages;
+let currentCategory = 'top_rated';
+
+categoryButtonsDOM.forEach(button => {
+    button.onclick = () => {
+        currentCategory = button.dataset.category;
+        currentPage = 1;
+        getMoviesByCategory(currentPage);
+    };
+});
 
 function getGenresById(id) {
     return genres.filter(genre => genre.id === id)[0]
@@ -34,6 +49,24 @@ function formatDate(date) {
         month: 'long',
         year: 'numeric'
     }).format(formattedDate);
+}
+
+function changePagination() {
+    if (currentPage <= 1) {
+        prevPageBtnDOM.classList.add("hidden");
+    } else {
+        prevPageBtnDOM.classList.remove("hidden");
+        prevPageBtnDOM.onclick = () => getTopRatedMovies(currentPage - 1);
+        prevPageBtnDOM.innerHTML = currentPage - 1;
+    }
+    currPageDOM.innerHTML = currentPage;
+    if (currentPage >= totalPages) {
+        nextPageBtnDOM.classList.add("hidden");
+    } else {
+        nextPageBtnDOM.classList.remove("hidden");
+        nextPageBtnDOM.onclick = () => getTopRatedMovies(currentPage + 1);
+        nextPageBtnDOM.innerHTML = currentPage + 1;
+    }
 }
 
 async function getGenres() {
@@ -86,23 +119,39 @@ function showMainPage() {
     mainDOM.style.display = 'grid';
 }
 
-async function getTopRatedMovies(page) {
+async function getMoviesByCategory(page, category = currentCategory, isClearPage = true) {
     try {
         const response = await fetch(
-            `https://api.themoviedb.org/3/movie/top_rated?language=uk-UA&page=${page}`, options
+            `https://api.themoviedb.org/3/movie/${category}?language=uk-UA&page=${page}`, options
         );
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
         const data = await response.json();
         const movies = data.results;
+        currentPage = data.page;
+        totalPages = data.total_pages;
 
-        mainDOM.innerHTML = '';
+        changePagination();
+
+        if (isClearPage) mainDOM.innerHTML = '';
 
         movies.forEach(movie => {
 
             const description = truncateText(movie.overview, 100);
             const movieGenres = movie.genre_ids.map(id => getGenresById(id).name).join(' • ');
+
+            const rating = Math.round(movie.vote_average / 2);
+
+            let stars = '';
+
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    stars += '★';
+                } else {
+                    stars += '☆';
+                }
+            }
 
             mainDOM.insertAdjacentHTML(
                 'beforeend',
@@ -113,6 +162,7 @@ async function getTopRatedMovies(page) {
                     </div>
                     <div class="movie-item-info">
                         <h2 class="movie-item-info-title">${movie.title}</h2>
+                        <div class="movie-item-rating">${stars}</div>
                         <p class="movie-item-description">${description}</p>
                         <div class="movie-item-genres">${movieGenres}</div>
                     </div>
@@ -137,7 +187,7 @@ backButtonDOM.onclick = showMainPage;
 
 async function loadPage() {
     await getGenres();
-    await getTopRatedMovies(1);
+    await getMoviesByCategory(currentPage);
 }
 
 loadPage();

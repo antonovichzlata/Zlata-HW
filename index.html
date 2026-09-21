@@ -5,19 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TMDB</title>
 
-    <link rel="stylesheet" href="reset.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
+    <div class="pagination">
+        <button class="prev-page">Попередня</button>
+        <span class="curr-page"></span>
+        <button class="next-page">Наступна</button>
+    </div>
     <div class="wrapper">
+        <div class="movie-filters">
+            <button data-category="top_rated">Топ рейтингу</button>
+            <button data-category="popular">Популярні</button>
+            <button data-category="now_playing">Зараз у кіно</button>
+            <button data-category="upcoming">Очікуються</button>
+        </div>
         <main class="main"></main>
 
         <section class="movie-details-page">
             <button class="back-button">
                 ← Назад
             </button>
-            <div class="movie-details"></div>
+            <div class="movie-details">
+                <div class="rating">
+  <span class="star">★</span>
+  <span class="star">★</span>
+  <span class="star">★</span>
+  <span class="star">★</span>
+  <span class="star-empty">☆</span>
+</div>
+            </div>
         </section>
     </div>
     
