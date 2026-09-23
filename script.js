@@ -56,7 +56,7 @@ function changePagination() {
         prevPageBtnDOM.classList.add("hidden");
     } else {
         prevPageBtnDOM.classList.remove("hidden");
-        prevPageBtnDOM.onclick = () => getTopRatedMovies(currentPage - 1);
+        prevPageBtnDOM.onclick = () => getMoviesByCategory(currentPage - 1);
         prevPageBtnDOM.innerHTML = currentPage - 1;
     }
     currPageDOM.innerHTML = currentPage;
@@ -64,7 +64,7 @@ function changePagination() {
         nextPageBtnDOM.classList.add("hidden");
     } else {
         nextPageBtnDOM.classList.remove("hidden");
-        nextPageBtnDOM.onclick = () => getTopRatedMovies(currentPage + 1);
+        nextPageBtnDOM.onclick = () => getMoviesByCategory(currentPage + 1);
         nextPageBtnDOM.innerHTML = currentPage + 1;
     }
 }
